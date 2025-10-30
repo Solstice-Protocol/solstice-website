@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useSolstice } from '../contexts/SolsticeContext';
 import { QRScanner } from './QRScanner';
+import { ChallengeScanner } from './ChallengeScanner';
 import { IdentityStatus } from './IdentityStatus';
 import { ProofsDashboard } from './ProofsDashboard';
 import { AlertCircle } from 'lucide-react';
@@ -9,13 +10,20 @@ import { AlertCircle } from 'lucide-react';
 export function Dashboard() {
   const { publicKey, connected } = useWallet();
   const { identity, fetchIdentity, loading, error } = useSolstice();
-  const [activeTab, setActiveTab] = useState<'scan' | 'verify' | 'status'>('scan');
+  const [activeTab, setActiveTab] = useState<'scan' | 'challenge' | 'verify' | 'status'>('scan');
 
   useEffect(() => {
     if (publicKey && connected) {
       fetchIdentity(publicKey.toString());
     }
   }, [publicKey, connected, fetchIdentity]);
+
+  // Refresh identity when switching to challenge or status tabs
+  useEffect(() => {
+    if ((activeTab === 'challenge' || activeTab === 'status') && publicKey && connected) {
+      fetchIdentity(publicKey.toString());
+    }
+  }, [activeTab, publicKey, connected, fetchIdentity]);
 
   if (!connected) {
     return (
@@ -65,17 +73,27 @@ export function Dashboard() {
         <div className="flex border-b border-gray-700">
           <button
             onClick={() => setActiveTab('scan')}
-            className={`flex-1 px-6 py-4 font-semibold transition-colors ${
+            className={`flex-1 px-4 py-4 font-semibold transition-colors text-sm ${
               activeTab === 'scan'
                 ? 'bg-purple-600 text-white'
                 : 'bg-gray-900/50 text-gray-400 hover:text-white'
             }`}
           >
-            Scan QR Code
+            Register Identity
+          </button>
+          <button
+            onClick={() => setActiveTab('challenge')}
+            className={`flex-1 px-4 py-4 font-semibold transition-colors text-sm ${
+              activeTab === 'challenge'
+                ? 'bg-purple-600 text-white'
+                : 'bg-gray-900/50 text-gray-400 hover:text-white'
+            }`}
+          >
+            Scan Challenge
           </button>
           <button
             onClick={() => setActiveTab('verify')}
-            className={`flex-1 px-6 py-4 font-semibold transition-colors ${
+            className={`flex-1 px-4 py-4 font-semibold transition-colors text-sm ${
               activeTab === 'verify'
                 ? 'bg-purple-600 text-white'
                 : 'bg-gray-900/50 text-gray-400 hover:text-white'
@@ -85,19 +103,20 @@ export function Dashboard() {
           </button>
           <button
             onClick={() => setActiveTab('status')}
-            className={`flex-1 px-6 py-4 font-semibold transition-colors ${
+            className={`flex-1 px-4 py-4 font-semibold transition-colors text-sm ${
               activeTab === 'status'
                 ? 'bg-purple-600 text-white'
                 : 'bg-gray-900/50 text-gray-400 hover:text-white'
             }`}
           >
-            Status & Details
+            Status
           </button>
         </div>
 
         {/* Tab Content */}
         <div className="p-6">
           {activeTab === 'scan' && <QRScanner />}
+          {activeTab === 'challenge' && <ChallengeScanner />}
           {activeTab === 'verify' && <ProofsDashboard />}
           {activeTab === 'status' && <IdentityStatus identity={identity} loading={loading} expanded />}
         </div>
