@@ -1,0 +1,12 @@
+1,1,2,main.allowedCountry
+2,2,2,main.isFromCountry
+3,3,2,main.commitmentHash
+4,4,2,main.countryCode
+5,5,2,main.identitySecret
+6,6,2,main.commitmentCheck
+7,-1,1,main.isEqual.out
+8,-1,1,main.isEqual.in[0]
+9,-1,1,main.isEqual.in[1]
+10,-1,0,main.isEqual.isz.out
+11,7,0,main.isEqual.isz.in
+12,8,0,main.isEqual.isz.inv

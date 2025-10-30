@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useMemo } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
+import { clusterApiUrl } from '@solana/web3.js';
+import { SolsticeProvider } from './contexts/SolsticeContext';
+import { Dashboard } from './components/Dashboard';
+import { Header } from './components/Header';
+import Home from './pages/Home';
+import './App.css';
+import '@solana/wallet-adapter-react-ui/styles.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Configure Solana network
+  const network = (import.meta.env.VITE_SOLANA_NETWORK || 'devnet') as 'devnet' | 'mainnet-beta' | 'testnet';
+  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+
+  // Configure wallet adapters - only Phantom to avoid duplicate keys
+  const wallets = useMemo(
+    () => [
+      new PhantomWalletAdapter(),
+    ],
+    []
+  );
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={wallets} autoConnect>
+          <WalletModalProvider>
+            <SolsticeProvider>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route 
+                  path="/app" 
+                  element={
+                    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+                      <Header />
+                      <main className="container mx-auto px-4 py-8">
+                        <Dashboard />
+                      </main>
+                    </div>
+                  } 
+                />
+              </Routes>
+            </SolsticeProvider>
+          </WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
