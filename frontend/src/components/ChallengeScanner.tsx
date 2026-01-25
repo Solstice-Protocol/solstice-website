@@ -27,7 +27,7 @@ export function ChallengeScanner() {
   const [error, setError] = useState<string | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [pasteError, setPasteError] = useState<string | null>(null);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -48,7 +48,7 @@ export function ChallengeScanner() {
           canvas.height = img.height;
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0);
-          
+
           const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
           if (imageData) {
             const code = jsQR(imageData.data, imageData.width, imageData.height);
@@ -74,21 +74,21 @@ export function ChallengeScanner() {
       setError(null);
 
       const clipboardItems = await navigator.clipboard.read();
-      
+
       for (const item of clipboardItems) {
         if (item.types.includes('image/png') || item.types.includes('image/jpeg')) {
           const blob = await item.getType(item.types.find(t => t.startsWith('image/'))!);
-          
+
           const img = new Image();
           const url = URL.createObjectURL(blob);
-          
+
           img.onload = async () => {
             const canvas = document.createElement('canvas');
             canvas.width = img.width;
             canvas.height = img.height;
             const ctx = canvas.getContext('2d');
             ctx?.drawImage(img, 0, 0);
-            
+
             const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
             if (imageData) {
               const code = jsQR(imageData.data, imageData.width, imageData.height);
@@ -100,12 +100,12 @@ export function ChallengeScanner() {
             }
             URL.revokeObjectURL(url);
           };
-          
+
           img.src = url;
           return;
         }
       }
-      
+
       setPasteError('No image found in clipboard. Please copy an image first.');
     } catch (error: any) {
       console.error('Error pasting image:', error);
@@ -125,7 +125,7 @@ export function ChallengeScanner() {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
-        
+
         videoRef.current.onloadedmetadata = () => {
           videoRef.current?.play();
           scanQRFromVideo();
@@ -134,7 +134,7 @@ export function ChallengeScanner() {
     } catch (error: any) {
       console.error('Camera error:', error);
       setCameraError(
-        error.name === 'NotAllowedError' 
+        error.name === 'NotAllowedError'
           ? 'Camera permission denied. Please allow camera access and try again.'
           : 'Failed to access camera.'
       );
@@ -171,7 +171,7 @@ export function ChallengeScanner() {
       if (imageData) {
         const code = jsQR(imageData.data, imageData.width, imageData.height);
         if (code) {
-          console.log('✅ Challenge QR code detected from camera!');
+          console.log(' Challenge QR code detected from camera!');
           stopCamera();
           handleChallengeQRData(code.data);
           return;
@@ -192,7 +192,7 @@ export function ChallengeScanner() {
     try {
       setError(null);
       console.log('Processing challenge QR code...');
-      
+
       // Parse challenge from QR code
       let parsed;
       try {
@@ -256,21 +256,21 @@ export function ChallengeScanner() {
       if (challenge.callbackUrl) {
         console.log('📤 Submitting proof to:', challenge.callbackUrl);
         console.log('📦 Proof response:', proofResponse);
-        
+
         // Extract challenge ID from callback URL for verification
         const urlMatch = challenge.callbackUrl.match(/challenges\/([^/]+)\//);
         const expectedChallengeId = urlMatch ? urlMatch[1] : null;
         console.log('🎯 Expected challenge ID from URL:', expectedChallengeId);
-        
+
         if (expectedChallengeId && proofResponse.challengeId !== expectedChallengeId) {
           console.warn('⚠️ Challenge ID mismatch detected!');
           console.warn('  From QR:', proofResponse.challengeId);
           console.warn('  From URL:', expectedChallengeId);
           // Use the challenge ID from the URL
           proofResponse.challengeId = expectedChallengeId;
-          console.log('✅ Corrected challenge ID to match URL');
+          console.log(' Corrected challenge ID to match URL');
         }
-        
+
         const response = await fetch(challenge.callbackUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -279,22 +279,22 @@ export function ChallengeScanner() {
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-          console.error('❌ Backend error:', errorData);
+          console.error(' Backend error:', errorData);
           throw new Error(errorData.error || 'Failed to submit proof to app');
         }
-        
-        console.log('✅ Proof accepted by backend');
+
+        console.log(' Proof accepted by backend');
       }
 
       setSuccess(true);
-      console.log('✅ Proof submitted successfully!');
-      
+      console.log(' Proof submitted successfully!');
+
       // Refresh identity status after successful proof submission
       if (wallet.publicKey) {
         await fetchIdentity(wallet.publicKey.toString());
         console.log('🔄 Identity status refreshed');
       }
-      
+
       // Reset after 3 seconds
       setTimeout(() => {
         setChallenge(null);
@@ -358,28 +358,28 @@ export function ChallengeScanner() {
 
     return (
       <div className="max-w-2xl mx-auto">
-        <div className="bg-gray-900/50 border border-purple-500/30 rounded-xl p-6 mb-6">
-          <h3 className="text-2xl font-bold mb-4 text-purple-400">Verification Challenge</h3>
-          
+        <div className="bg-secondary/50 border border-vintage-grape-500/30 rounded-xl p-6 mb-6">
+          <h3 className="text-2xl font-bold mb-4 text-vintage-grape-400 font-serif">Verification Challenge</h3>
+
           <div className="space-y-4">
             <div>
-              <label className="text-sm text-gray-400">Requesting App</label>
-              <p className="text-lg font-semibold">{challenge.appName}</p>
+              <label className="text-sm text-text-muted">Requesting App</label>
+              <p className="text-lg font-semibold text-text-primary">{challenge.appName}</p>
             </div>
 
             <div>
-              <label className="text-sm text-gray-400">Verification Required</label>
-              <p className="text-lg">{getProofTypeDescription(challenge.proofType, challenge.params)}</p>
+              <label className="text-sm text-text-muted">Verification Required</label>
+              <p className="text-lg text-text-primary">{getProofTypeDescription(challenge.proofType, challenge.params)}</p>
             </div>
 
             <div>
-              <label className="text-sm text-gray-400">Challenge ID</label>
-              <p className="text-sm font-mono text-gray-300">{challenge.challengeId.substring(0, 16)}...</p>
+              <label className="text-sm text-text-muted">Challenge ID</label>
+              <p className="text-sm font-mono text-text-secondary">{challenge.challengeId.substring(0, 16)}...</p>
             </div>
 
             {!isExpired && (
               <div>
-                <label className="text-sm text-gray-400">Time Remaining</label>
+                <label className="text-sm text-text-muted">Time Remaining</label>
                 <p className="text-lg font-semibold text-green-400">
                   {minutes}:{seconds.toString().padStart(2, '0')}
                 </p>
@@ -397,13 +397,12 @@ export function ChallengeScanner() {
             <button
               onClick={handleSubmitProof}
               disabled={submitting || isExpired}
-              className={`flex-1 px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors ${
-                isExpired
-                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+              className={`flex-1 px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors font-serif ${isExpired
+                  ? 'bg-tertiary text-text-muted cursor-not-allowed'
                   : submitting
-                  ? 'bg-purple-700 text-white cursor-wait'
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
-              }`}
+                    ? 'bg-vintage-grape-700 text-white cursor-wait'
+                    : 'bg-vintage-grape-600 hover:bg-vintage-grape-700 text-white'
+                }`}
             >
               {submitting ? (
                 <>
@@ -422,7 +421,7 @@ export function ChallengeScanner() {
 
             <button
               onClick={() => setChallenge(null)}
-              className="px-6 py-3 rounded-lg font-semibold bg-gray-700 hover:bg-gray-600 text-white transition-colors"
+              className="px-6 py-3 rounded-lg font-semibold bg-tertiary hover:bg-tertiary/70 text-text-primary transition-colors font-serif"
             >
               Cancel
             </button>
@@ -435,8 +434,8 @@ export function ChallengeScanner() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold mb-2">Scan Verification Challenge</h3>
-        <p className="text-gray-400">
+        <h3 className="text-2xl font-bold mb-2 text-text-primary font-serif">Scan Verification Challenge</h3>
+        <p className="text-text-secondary">
           Scan a challenge QR code from a third-party app that requires verification
         </p>
       </div>
@@ -458,7 +457,7 @@ export function ChallengeScanner() {
           <>
             <button
               onClick={startCamera}
-              className="w-full px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold flex items-center justify-center gap-3 transition-colors"
+              className="w-full px-6 py-4 bg-vintage-grape-600 hover:bg-vintage-grape-700 text-white rounded-lg font-semibold flex items-center justify-center gap-3 transition-colors font-serif"
             >
               <Camera className="w-6 h-6" />
               Scan with Camera
@@ -466,10 +465,10 @@ export function ChallengeScanner() {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-gray-700" />
+                <span className="w-full border-t border-border-custom" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-gray-900 px-2 text-gray-500">Or</span>
+                <span className="bg-primary px-2 text-text-muted">Or</span>
               </div>
             </div>
 
@@ -482,7 +481,7 @@ export function ChallengeScanner() {
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="w-full px-6 py-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold flex items-center justify-center gap-3 transition-colors"
+              className="w-full px-6 py-4 bg-tertiary hover:bg-tertiary/70 text-text-primary rounded-lg font-semibold flex items-center justify-center gap-3 transition-colors font-serif"
             >
               <Upload className="w-6 h-6" />
               Upload Challenge QR Image
@@ -490,16 +489,16 @@ export function ChallengeScanner() {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-gray-700" />
+                <span className="w-full border-t border-border-custom" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-gray-900 px-2 text-gray-500">Or</span>
+                <span className="bg-primary px-2 text-text-muted">Or</span>
               </div>
             </div>
 
             <button
               onClick={handlePasteImage}
-              className="w-full px-6 py-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold flex items-center justify-center gap-3 transition-colors"
+              className="w-full px-6 py-4 bg-tertiary hover:bg-tertiary/70 text-text-primary rounded-lg font-semibold flex items-center justify-center gap-3 transition-colors font-serif"
             >
               <Clipboard className="w-6 h-6" />
               Paste QR Image from Clipboard
@@ -522,7 +521,7 @@ export function ChallengeScanner() {
               muted
             />
             <canvas ref={canvasRef} className="hidden" />
-            
+
             <button
               onClick={stopCamera}
               className="absolute top-4 right-4 p-3 bg-red-600 hover:bg-red-700 rounded-full text-white transition-colors"
