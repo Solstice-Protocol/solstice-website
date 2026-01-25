@@ -18,7 +18,7 @@ type OnboardingStep = 'welcome' | 'wallet' | 'scan-method' | 'camera' | 'upload'
 export function OnboardingFlow() {
   const wallet = useWallet();
   const navigate = useNavigate();
-  const { identity, fetchIdentity, registerIdentity } = useSolstice();
+  const { fetchIdentity, registerIdentity } = useSolstice();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
   const [error, setError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -58,7 +58,7 @@ export function OnboardingFlow() {
         streamRef.current = stream;
         scanQRCode();
       }
-    } catch (err: any) {
+    } catch {
       setError('Unable to access camera. Please check permissions.');
     }
   };
@@ -163,9 +163,10 @@ export function OnboardingFlow() {
       } else {
         throw new Error('Failed to register identity');
       }
-    } catch (err: any) {
-      console.error('Error during onboarding:', err);
-      setError(err.message || 'Failed to process QR code');
+    } catch (err: unknown) {
+      const error = err as Error;
+      console.error('Error during onboarding:', error);
+      setError(error.message || 'Failed to process QR code');
       setCurrentStep('scan-method');
     }
   };
@@ -207,7 +208,7 @@ export function OnboardingFlow() {
         img.src = event.target?.result as string;
       };
       reader.readAsDataURL(file);
-    } catch (err: any) {
+    } catch {
       setError('Failed to read file');
       setCurrentStep('scan-method');
     }

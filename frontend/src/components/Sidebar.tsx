@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { X, QrCode, Shield, CheckCircle, User, Zap } from 'lucide-react';
+import { X, Shield, CheckCircle, User, Zap } from 'lucide-react';
 
 interface SidebarProps {
     isOpen: boolean;
