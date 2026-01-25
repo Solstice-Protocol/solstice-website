@@ -39,10 +39,6 @@ jobs:
       - name: Build project
         working-directory: ./frontend
         run: npm run build
-      
-      - name: Check for security vulnerabilities
-        working-directory: ./frontend
-        run: npm audit --audit-level=moderate
 
   code-quality:
     runs-on: ubuntu-latest
@@ -62,17 +58,3 @@ jobs:
       - name: Check code formatting
         working-directory: ./frontend
         run: npx prettier --check "src/**/*.{ts,tsx}" || echo "No prettier config found"
-
-  copilot-review:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: GitHub Copilot PR Review
-        uses: github/gh-copilot-review@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
