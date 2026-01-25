@@ -20,21 +20,21 @@ export function IdentityStatus({ identity, loading, expanded = false }: Identity
 
   if (loading) {
     return (
-      <div className="col-span-full bg-gray-800/50 rounded-xl p-6 border border-gray-700 animate-pulse">
-        <div className="h-6 bg-gray-700 rounded w-1/3 mb-4"></div>
-        <div className="h-4 bg-gray-700 rounded w-2/3"></div>
+      <div className="col-span-full bg-secondary/50 rounded-xl p-6 border border-border-custom animate-pulse">
+        <div className="h-6 bg-tertiary rounded w-1/3 mb-4"></div>
+        <div className="h-4 bg-tertiary rounded w-2/3"></div>
       </div>
     );
   }
 
   if (!identity) {
     return (
-      <div className="col-span-full bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+      <div className="col-span-full bg-secondary/50 rounded-xl p-6 border border-border-custom">
         <div className="flex items-center gap-3 mb-4">
-          <Shield className="w-8 h-8 text-gray-400" />
+          <Shield className="w-8 h-8 text-text-muted" />
           <div>
-            <h3 className="text-lg font-bold text-white">No Identity Registered</h3>
-            <p className="text-sm text-gray-400">Scan your Aadhaar QR code to get started</p>
+            <h3 className="text-lg font-bold text-text-primary font-serif">No Identity Registered</h3>
+            <p className="text-sm text-text-secondary">Scan your Aadhaar QR code to get started</p>
           </div>
         </div>
       </div>
@@ -44,7 +44,7 @@ export function IdentityStatus({ identity, loading, expanded = false }: Identity
   return (
     <>
       {/* Main Status Card */}
-      <div className="col-span-full lg:col-span-1 bg-gradient-to-br from-purple-900/50 to-blue-900/50 rounded-xl p-6 border border-purple-700/50">
+      <div className="col-span-full lg:col-span-1 bg-gradient-to-br from-vintage-grape-900/50 to-shadow-grey-900/50 rounded-xl p-6 border border-vintage-grape-700/50">
         <div className="flex items-center gap-3 mb-4">
           {identity.isVerified ? (
             <CheckCircle className="w-8 h-8 text-green-400" />
@@ -52,17 +52,17 @@ export function IdentityStatus({ identity, loading, expanded = false }: Identity
             <Clock className="w-8 h-8 text-yellow-400" />
           )}
           <div>
-            <h3 className="text-lg font-bold text-white">
+            <h3 className="text-lg font-bold text-text-primary font-serif">
               {identity.isVerified ? 'Verified Identity' : 'Pending Verification'}
             </h3>
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-text-secondary">
               {identity.isVerified ? 'Ready for authentication' : 'Complete attribute verification'}
             </p>
           </div>
         </div>
-        
+
         {identity.verificationTimestamp && (
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-text-muted">
             Verified: {new Date(identity.verificationTimestamp * 1000).toLocaleDateString()}
           </p>
         )}
@@ -87,27 +87,27 @@ export function IdentityStatus({ identity, loading, expanded = false }: Identity
 
       {/* Expanded Details */}
       {expanded && (
-        <div className="col-span-full bg-gray-800/50 rounded-xl p-6 border border-gray-700 space-y-4">
-          <h3 className="text-xl font-bold text-white mb-4">Identity Details</h3>
-          
+        <div className="col-span-full bg-secondary/50 rounded-xl p-6 border border-border-custom space-y-4">
+          <h3 className="text-xl font-bold text-text-primary mb-4 font-serif">Identity Details</h3>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <DetailItem label="Wallet Address" value={identity.walletAddress} mono />
             <DetailItem label="Verification Status" value={identity.isVerified ? 'Verified' : 'Pending'} />
-            <DetailItem 
-              label="Attributes Bitmap" 
-              value={`0b${identity.attributesVerified.toString(2).padStart(8, '0')}`} 
-              mono 
+            <DetailItem
+              label="Attributes Bitmap"
+              value={`0b${identity.attributesVerified.toString(2).padStart(8, '0')}`}
+              mono
             />
             {identity.verificationTimestamp && (
-              <DetailItem 
-                label="Timestamp" 
-                value={new Date(identity.verificationTimestamp * 1000).toLocaleString()} 
+              <DetailItem
+                label="Timestamp"
+                value={new Date(identity.verificationTimestamp * 1000).toLocaleString()}
               />
             )}
           </div>
 
-          <div className="pt-4 border-t border-gray-700">
-            <h4 className="text-sm font-semibold text-gray-300 mb-2">Verification Breakdown</h4>
+          <div className="pt-4 border-t border-border-custom">
+            <h4 className="text-sm font-semibold text-text-secondary mb-2 font-serif">Verification Breakdown</h4>
             <div className="flex gap-4 text-sm">
               <VerificationBadge label="Age" verified={isAgeVerified} />
               <VerificationBadge label="Nationality" verified={isNationalityVerified} />
@@ -122,16 +122,16 @@ export function IdentityStatus({ identity, loading, expanded = false }: Identity
 
 function AttributeCard({ title, verified, description }: { title: string; verified: boolean; description: string }) {
   return (
-    <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+    <div className="bg-secondary/50 rounded-xl p-6 border border-border-custom">
       <div className="flex items-center gap-3 mb-2">
         {verified ? (
           <CheckCircle className="w-6 h-6 text-green-400" />
         ) : (
-          <XCircle className="w-6 h-6 text-gray-500" />
+          <XCircle className="w-6 h-6 text-text-muted" />
         )}
-        <h3 className="font-semibold text-white">{title}</h3>
+        <h3 className="font-semibold text-text-primary font-serif">{title}</h3>
       </div>
-      <p className="text-sm text-gray-400">{description}</p>
+      <p className="text-sm text-text-secondary">{description}</p>
     </div>
   );
 }
@@ -139,17 +139,16 @@ function AttributeCard({ title, verified, description }: { title: string; verifi
 function DetailItem({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
   return (
     <div>
-      <p className="text-xs text-gray-400 mb-1">{label}</p>
-      <p className={`text-sm text-white ${mono ? 'font-mono break-all' : ''}`}>{value}</p>
+      <p className="text-xs text-text-muted mb-1">{label}</p>
+      <p className={`text-sm text-text-primary ${mono ? 'font-mono break-all' : ''}`}>{value}</p>
     </div>
   );
 }
 
 function VerificationBadge({ label, verified }: { label: string; verified: boolean }) {
   return (
-    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-      verified ? 'bg-green-900/50 text-green-300 border border-green-700' : 'bg-gray-900/50 text-gray-400 border border-gray-700'
-    }`}>
+    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${verified ? 'bg-green-900/30 text-green-300 border border-green-700/50' : 'bg-tertiary/50 text-text-muted border border-border-custom'
+      }`}>
       {label}: {verified ? '' : ''}
     </span>
   );

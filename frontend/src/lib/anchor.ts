@@ -158,9 +158,9 @@ export async function registerIdentity(
     }
     
     console.log('Updating existing identity with new data...');
-    // Anchor generates methods dynamically - cast to any to bypass TypeScript
+    // Anchor converts snake_case to camelCase
     const tx = await (program.methods as any)
-      .update_identity(commitmentBytes, merkleRootBytes)
+      .updateIdentity(commitmentBytes, merkleRootBytes)
       .accounts({
         identity: identityPda,
         user: userPublicKey,

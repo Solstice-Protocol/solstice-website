@@ -1,1 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+@font-face {
+    font-family: 'Advercase';
+    src: url('/fonts/Advercase.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 @import "tailwindcss";
+
+@theme {
+    /* --- Typography --- */
+    --font-serif: "Playfair Display", serif;
+    --font-sans: "Playfair Display", serif;
+    /* Force Playfair as default */
+
+    /* --- User Provided Palette --- */
+
+    /* Shadow Grey */
+    --color-shadow-grey-50: #f0f0f5;
+    --color-shadow-grey-100: #e0e0eb;
+    --color-shadow-grey-200: #c2c2d6;
+    --color-shadow-grey-300: #a3a3c2;
+    --color-shadow-grey-400: #8585ad;
+    --color-shadow-grey-500: #666699;
+    --color-shadow-grey-600: #52527a;
+    --color-shadow-grey-700: #3d3d5c;
+    --color-shadow-grey-800: #29293d;
+    --color-shadow-grey-900: #14141f;
+    --color-shadow-grey-950: #0e0e15;
+
+    /* Vintage Grape */
+    --color-vintage-grape-50: #f1f0f5;
+    --color-vintage-grape-100: #e4e0eb;
+    --color-vintage-grape-200: #c9c1d7;
+    --color-vintage-grape-300: #aea2c3;
+    --color-vintage-grape-400: #9384ae;
+    --color-vintage-grape-500: #77659a;
+    --color-vintage-grape-600: #60517b;
+    --color-vintage-grape-700: #483c5d;
+    --color-vintage-grape-800: #30283e;
+    --color-vintage-grape-900: #18141f;
+    --color-vintage-grape-950: #110e16;
+
+    /* Stone Brown */
+    --color-stone-brown-50: #f4f3f1;
+    --color-stone-brown-100: #e8e6e3;
+    --color-stone-brown-200: #d1cdc7;
+    --color-stone-brown-300: #bab4ab;
+    --color-stone-brown-400: #a39b8f;
+    --color-stone-brown-500: #8c8273;
+    --color-stone-brown-600: #70685c;
+    --color-stone-brown-700: #544e45;
+    --color-stone-brown-800: #38342e;
+    --color-stone-brown-900: #1c1a17;
+    --color-stone-brown-950: #141210;
+
+    /* Grey Olive */
+    --color-grey-olive-50: #f4f3f1;
+    --color-grey-olive-100: #e9e7e2;
+    --color-grey-olive-200: #d3cec5;
+    --color-grey-olive-300: #bcb6a9;
+    --color-grey-olive-400: #a69e8c;
+    --color-grey-olive-500: #90866f;
+    --color-grey-olive-600: #736b59;
+    --color-grey-olive-700: #565043;
+    --color-grey-olive-800: #3a352c;
+    --color-grey-olive-900: #1d1b16;
+    --color-grey-olive-950: #141310;
+
+    /* Khaki Beige */
+    --color-khaki-beige-50: #f4f3f0;
+    --color-khaki-beige-100: #eae8e1;
+    --color-khaki-beige-200: #d5d1c3;
+    --color-khaki-beige-300: #c0baa5;
+    --color-khaki-beige-400: #aaa388;
+    --color-khaki-beige-500: #958c6a;
+    --color-khaki-beige-600: #777055;
+    --color-khaki-beige-700: #5a543f;
+    --color-khaki-beige-800: #3c382a;
+    --color-khaki-beige-900: #1e1c15;
+    --color-khaki-beige-950: #15140f;
+
+    /* --- Semantic Mappings --- */
+
+    /* Backgrounds */
+    --color-primary: var(--color-shadow-grey-950);
+    --color-secondary: var(--color-shadow-grey-900);
+    --color-tertiary: var(--color-shadow-grey-800);
+
+    /* Text */
+    --color-text-primary: var(--color-stone-brown-50);
+    --color-text-secondary: var(--color-stone-brown-300);
+    --color-text-muted: var(--color-stone-brown-500);
+
+    /* Borders & Accents */
+    --color-border-custom: var(--color-shadow-grey-800);
+
+    /* Feature Accents */
+    --color-accent-grape: var(--color-vintage-grape-400);
+    --color-accent-olive: var(--color-grey-olive-400);
+}
+
+/* Global Reset */
+body {
+    font-family: var(--font-serif);
+    background-color: var(--color-primary);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Selection */
+::selection {
+    background: var(--color-vintage-grape-700);
+    color: var(--color-stone-brown-50);
+}

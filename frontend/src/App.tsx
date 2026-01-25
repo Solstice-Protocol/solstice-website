@@ -1,13 +1,17 @@
 import { useMemo } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import { SolsticeProvider } from './contexts/SolsticeContext';
-import { Dashboard } from './components/Dashboard';
-import { Header } from './components/Header';
-import Home from './pages/Home';
+import { Layout } from './components/Layout';
+import { OnboardingFlow } from './components/OnboardingFlow';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { IdentityStatusPage } from './pages/IdentityStatusPage';
+import { QRScannerPage } from './pages/QRScannerPage';
+import { ChallengeScannerPage } from './pages/ChallengeScannerPage';
+import { ProofsPage } from './pages/ProofsPage';
 import './App.css';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
@@ -31,18 +35,45 @@ function App() {
           <WalletModalProvider>
             <SolsticeProvider>
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route 
-                  path="/app" 
-                  element={
-                    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
-                      <Header />
-                      <main className="container mx-auto px-4 py-8">
-                        <Dashboard />
-                      </main>
-                    </div>
-                  } 
-                />
+                {/* Onboarding Route - First time users */}
+                <Route path="/onboarding" element={<OnboardingFlow />} />
+                
+                {/* Main App Routes - Protected, requires onboarding */}
+                <Route element={<Layout />}>
+                  <Route path="/" element={<Navigate to="/status" replace />} />
+                  <Route 
+                    path="/status" 
+                    element={
+                      <ProtectedRoute>
+                        <IdentityStatusPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/scan" 
+                    element={
+                      <ProtectedRoute>
+                        <QRScannerPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/challenge" 
+                    element={
+                      <ProtectedRoute>
+                        <ChallengeScannerPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/proofs" 
+                    element={
+                      <ProtectedRoute>
+                        <ProofsPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                </Route>
               </Routes>
             </SolsticeProvider>
           </WalletModalProvider>

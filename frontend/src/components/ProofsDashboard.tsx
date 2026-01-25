@@ -21,11 +21,11 @@ export function ProofsDashboard() {
   const loadProofs = async () => {
     try {
       setLoading(true);
-      
+
       // Load proofs from IndexedDB
       const storedProofs = await getStoredProofs();
       setProofs(storedProofs);
-      
+
     } catch (error) {
       console.error('Error loading proofs:', error);
     } finally {
@@ -36,29 +36,29 @@ export function ProofsDashboard() {
   const getStoredProofs = async (): Promise<ProofData[]> => {
     return new Promise((resolve) => {
       const request = indexedDB.open('SolsticeProofs', 1);
-      
+
       request.onupgradeneeded = (event: any) => {
         const db = event.target.result;
         if (!db.objectStoreNames.contains('proofs')) {
           db.createObjectStore('proofs', { keyPath: 'type' });
         }
       };
-      
+
       request.onsuccess = (event: any) => {
         const db = event.target.result;
         const transaction = db.transaction(['proofs'], 'readonly');
         const store = transaction.objectStore('proofs');
         const getAllRequest = store.getAll();
-        
+
         getAllRequest.onsuccess = () => {
           resolve(getAllRequest.result || []);
         };
-        
+
         getAllRequest.onerror = () => {
           resolve([]);
         };
       };
-      
+
       request.onerror = () => {
         resolve([]);
       };
@@ -128,7 +128,7 @@ export function ProofsDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <RefreshCw className="w-8 h-8 text-purple-500 animate-spin" />
+        <RefreshCw className="w-8 h-8 text-vintage-grape-500 animate-spin" />
       </div>
     );
   }
@@ -136,9 +136,9 @@ export function ProofsDashboard() {
   if (proofs.length === 0) {
     return (
       <div className="text-center py-12">
-        <Shield className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-gray-300 mb-2">No Proofs Generated Yet</h3>
-        <p className="text-gray-500 mb-6">
+        <Shield className="w-16 h-16 text-text-muted mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-text-secondary mb-2 font-serif">No Proofs Generated Yet</h3>
+        <p className="text-text-muted mb-6">
           Upload your Aadhaar QR code in the "Scan QR Code" tab to automatically generate your identity proofs.
         </p>
       </div>
@@ -148,8 +148,8 @@ export function ProofsDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">My Identity Proofs</h2>
-        <p className="text-gray-400">
+        <h2 className="text-2xl font-bold text-text-primary mb-2 font-serif">My Identity Proofs</h2>
+        <p className="text-text-secondary">
           Your zero-knowledge proofs allow you to verify attributes without revealing personal data.
           Share these proofs with services that need identity verification.
         </p>
@@ -159,14 +159,14 @@ export function ProofsDashboard() {
         {proofs.map((proof) => (
           <div
             key={proof.type}
-            className="bg-gray-900/50 border border-gray-700 rounded-xl p-6 hover:border-purple-500 transition-colors"
+            className="bg-secondary/50 border border-border-custom rounded-xl p-6 hover:border-vintage-grape-500 transition-colors"
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
                 <span className="text-3xl">{getProofIcon(proof.type)}</span>
                 <div>
-                  <h3 className="text-lg font-semibold text-white">
+                  <h3 className="text-lg font-semibold text-text-primary font-serif">
                     {getProofTitle(proof.type)}
                   </h3>
                   <div className="flex items-center gap-2 mt-1">
@@ -187,12 +187,12 @@ export function ProofsDashboard() {
             </div>
 
             {/* Description */}
-            <p className="text-sm text-gray-400 mb-4">
+            <p className="text-sm text-text-secondary mb-4">
               {getProofDescription(proof.type)}
             </p>
 
             {/* Metadata */}
-            <div className="text-xs text-gray-500 mb-4 space-y-1">
+            <div className="text-xs text-text-muted mb-4 space-y-1">
               <div>
                 Generated: {new Date(proof.generatedAt).toLocaleDateString()}
               </div>
@@ -207,14 +207,14 @@ export function ProofsDashboard() {
             <div className="flex gap-2">
               <button
                 onClick={() => shareProof(proof.type)}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm font-medium"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-vintage-grape-600 hover:bg-vintage-grape-700 text-white rounded-lg transition-colors text-sm font-medium font-serif"
               >
                 <Share2 className="w-4 h-4" />
                 Share
               </button>
               <button
                 onClick={() => regenerateProof(proof.type)}
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors text-sm font-medium"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-tertiary hover:bg-tertiary/70 text-text-primary rounded-lg transition-colors text-sm font-medium"
                 title="Regenerate proof with fresh timestamp"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -226,7 +226,7 @@ export function ProofsDashboard() {
 
       {/* Info Box */}
       <div className="bg-blue-900/20 border border-blue-700/50 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-blue-300 mb-2">How to Use Your Proofs</h3>
+        <h3 className="text-lg font-semibold text-blue-300 mb-2 font-serif">How to Use Your Proofs</h3>
         <ul className="space-y-2 text-sm text-blue-200">
           <li className="flex items-start gap-2">
             <span className="text-blue-400 mt-0.5">•</span>
