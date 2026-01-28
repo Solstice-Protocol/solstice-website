@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Shield, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 interface Identity {
@@ -29,22 +30,32 @@ export function IdentityStatus({ identity, loading, expanded = false }: Identity
 
   if (!identity) {
     return (
-      <div className="col-span-full bg-secondary/50 rounded-xl p-6 border border-border-custom">
+      <motion.div
+        className="col-span-full bg-secondary/50 rounded-xl p-6 border border-border-custom"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <div className="flex items-center gap-3 mb-4">
           <Shield className="w-8 h-8 text-text-muted" />
           <div>
             <h3 className="text-lg font-bold text-text-primary font-serif">No Identity Registered</h3>
-            <p className="text-sm text-text-secondary">Scan your Aadhaar QR code to get started</p>
+            <p className="text-sm text-text-secondary font-futuristic">Scan your Aadhaar QR code to get started</p>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
     <>
       {/* Main Status Card */}
-      <div className="col-span-full lg:col-span-1 bg-gradient-to-br from-vintage-grape-900/50 to-shadow-grey-900/50 rounded-xl p-6 border border-vintage-grape-700/50">
+      <motion.div
+        className="col-span-full lg:col-span-1 bg-gradient-to-br from-vintage-grape-900/50 to-shadow-grey-900/50 rounded-xl p-6 border border-vintage-grape-700/50 hover:border-vintage-grape-500/70 transition-colors duration-300"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <div className="flex items-center gap-3 mb-4">
           {identity.isVerified ? (
             <CheckCircle className="w-8 h-8 text-green-400" />
@@ -55,18 +66,18 @@ export function IdentityStatus({ identity, loading, expanded = false }: Identity
             <h3 className="text-lg font-bold text-text-primary font-serif">
               {identity.isVerified ? 'Verified Identity' : 'Pending Verification'}
             </h3>
-            <p className="text-sm text-text-secondary">
+            <p className="text-sm text-text-secondary font-futuristic">
               {identity.isVerified ? 'Ready for authentication' : 'Complete attribute verification'}
             </p>
           </div>
         </div>
 
         {identity.verificationTimestamp && (
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-text-muted font-futuristic">
             Verified: {new Date(identity.verificationTimestamp * 1000).toLocaleDateString()}
           </p>
         )}
-      </div>
+      </motion.div>
 
       {/* Attribute Cards */}
       <AttributeCard
@@ -122,7 +133,13 @@ export function IdentityStatus({ identity, loading, expanded = false }: Identity
 
 function AttributeCard({ title, verified, description }: { title: string; verified: boolean; description: string }) {
   return (
-    <div className="bg-secondary/50 rounded-xl p-6 border border-border-custom">
+    <motion.div
+      className="bg-secondary/50 rounded-xl p-6 border border-border-custom hover:border-vintage-grape-500/30 transition-colors duration-300"
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ scale: 1.02 }}
+    >
       <div className="flex items-center gap-3 mb-2">
         {verified ? (
           <CheckCircle className="w-6 h-6 text-green-400" />
@@ -131,8 +148,8 @@ function AttributeCard({ title, verified, description }: { title: string; verifi
         )}
         <h3 className="font-semibold text-text-primary font-serif">{title}</h3>
       </div>
-      <p className="text-sm text-text-secondary">{description}</p>
-    </div>
+      <p className="text-sm text-text-secondary font-futuristic font-light">{description}</p>
+    </motion.div>
   );
 }
 

@@ -8,10 +8,7 @@ import { SolsticeProvider } from './contexts/SolsticeContext';
 import { Layout } from './components/Layout';
 import { OnboardingFlow } from './components/OnboardingFlow';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import { IdentityStatusPage } from './pages/IdentityStatusPage';
-import { QRScannerPage } from './pages/QRScannerPage';
-import { ChallengeScannerPage } from './pages/ChallengeScannerPage';
-import { ProofsPage } from './pages/ProofsPage';
+import { DashboardPage } from './pages/DashboardPage';
 import './App.css';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
@@ -37,42 +34,23 @@ function App() {
               <Routes>
                 {/* Onboarding Route - First time users */}
                 <Route path="/onboarding" element={<OnboardingFlow />} />
-                
-                {/* Main App Routes - Protected, requires onboarding */}
+
+                {/* Main App - Single Dashboard */}
                 <Route element={<Layout />}>
-                  <Route path="/" element={<Navigate to="/status" replace />} />
-                  <Route 
-                    path="/status" 
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route
+                    path="/dashboard"
                     element={
                       <ProtectedRoute>
-                        <IdentityStatusPage />
+                        <DashboardPage />
                       </ProtectedRoute>
-                    } 
+                    }
                   />
-                  <Route 
-                    path="/scan" 
-                    element={
-                      <ProtectedRoute>
-                        <QRScannerPage />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="/challenge" 
-                    element={
-                      <ProtectedRoute>
-                        <ChallengeScannerPage />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="/proofs" 
-                    element={
-                      <ProtectedRoute>
-                        <ProofsPage />
-                      </ProtectedRoute>
-                    } 
-                  />
+                  {/* Legacy routes redirect to dashboard */}
+                  <Route path="/status" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/challenge" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/proofs" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/scan" element={<Navigate to="/dashboard" replace />} />
                 </Route>
               </Routes>
             </SolsticeProvider>

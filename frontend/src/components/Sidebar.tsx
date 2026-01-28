@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { X, Shield, CheckCircle, User, Zap } from 'lucide-react';
 
 interface SidebarProps {
@@ -9,7 +9,9 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
     const location = useLocation();
+    const navigate = useNavigate();
     const [isMobile, setIsMobile] = useState(false);
+    const [activeSection, setActiveSection] = useState('status');
 
     // Check if current screen is mobile
     useEffect(() => {
@@ -22,22 +24,57 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    // Close sidebar when route changes on mobile
+    // Track active section based on scroll position
     useEffect(() => {
+        const handleScroll = () => {
+            const sections = ['status', 'challenge', 'proofs'];
+            const scrollPosition = window.scrollY + 200;
+
+            for (const sectionId of sections) {
+                const element = document.getElementById(sectionId);
+                if (element) {
+                    const offsetTop = element.offsetTop;
+                    const offsetHeight = element.offsetHeight;
+                    if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+                        setActiveSection(sectionId);
+                        break;
+                    }
+                }
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, true);
+        return () => window.removeEventListener('scroll', handleScroll, true);
+    }, []);
+
+    const navItems = [
+        { id: 'status', label: 'Identity Status', icon: User },
+        { id: 'challenge', label: 'Scan Challenge', icon: Zap },
+        { id: 'proofs', label: 'My Proofs', icon: CheckCircle },
+    ];
+
+    const handleNavClick = (sectionId: string) => {
+        // Ensure we're on the dashboard page
+        if (location.pathname !== '/dashboard') {
+            navigate('/dashboard');
+            // Wait for navigation, then scroll
+            setTimeout(() => {
+                const element = document.getElementById(sectionId);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        } else {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Close sidebar on mobile after clicking
         if (isMobile) {
             onClose();
         }
-    }, [location.pathname, isMobile, onClose]);
-
-    const navItems = [
-        { id: 'status', label: 'Identity Status', path: '/status', icon: User },
-        { id: 'challenge', label: 'Scan Challenge', path: '/challenge', icon: Zap },
-        { id: 'proofs', label: 'My Proofs', path: '/proofs', icon: CheckCircle },
-    ];
-
-    const isActive = (path: string) => {
-        // Exact match or sub-path match if we had nested routes
-        return location.pathname === path;
     };
 
     return (
@@ -64,12 +101,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     {/* Header */}
                     <div className="flex items-center justify-between p-8 pb-4">
                         <div>
-                            <Link to="/status" className="block">
+                            <button onClick={() => handleNavClick('status')} className="block">
                                 <div className="flex items-center gap-2">
                                     <Shield className="w-5 h-5 text-vintage-grape-400" />
                                     <h2 className="text-sm font-light tracking-widest text-text-primary uppercase opacity-90 hover:opacity-100 transition-opacity">Solstice App</h2>
                                 </div>
-                            </Link>
+                            </button>
                             <div className="flex items-center gap-2 mt-2">
                                 <span className="text-[10px] text-text-muted uppercase tracking-widest font-light pl-7">v1.0.0</span>
                             </div>
@@ -89,15 +126,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     <nav className="flex-1 flex flex-col justify-center overflow-y-auto px-6 py-4 custom-scrollbar">
                         <ul className="space-y-4">
                             {navItems.map((item) => {
-                                const active = isActive(item.path);
+                                const active = activeSection === item.id;
                                 const Icon = item.icon;
 
                                 return (
                                     <li key={item.id}>
-                                        <Link
-                                            to={item.path}
+                                        <button
+                                            onClick={() => handleNavClick(item.id)}
                                             className={`
-                        flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 relative group
+                        w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 relative group
                         ${active
                                                     ? 'bg-vintage-grape-900/40 text-vintage-grape-200 border border-vintage-grape-500/30'
                                                     : 'text-text-muted hover:text-text-primary hover:bg-white/5 border border-transparent'
@@ -106,12 +143,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                                         >
                                             <Icon className={`w-4 h-4 ${active ? 'text-vintage-grape-300' : 'text-text-muted group-hover:text-text-primary'} transition-colors`} />
                                             <span className="tracking-wide font-light text-sm">{item.label}</span>
-
-                                            {/* Active Indicator Line (Scanner Style) - Optional, doing background style instead for main app */}
-                                            {/* {active && (
-                         <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-vintage-grape-400/80 shadow-[0_0_10px_rgba(119,101,154,0.6)]" />
-                      )} */}
-                                        </Link>
+                                        </button>
                                     </li>
                                 );
                             })}
@@ -146,3 +178,4 @@ export function MobileMenuButton({ onClick }: { onClick: () => void }) {
         </button>
     );
 }
+

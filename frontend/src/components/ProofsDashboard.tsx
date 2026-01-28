@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Shield, CheckCircle, XCircle, Share2, RefreshCw } from 'lucide-react';
 
 interface ProofData {
@@ -138,7 +139,7 @@ export function ProofsDashboard() {
       <div className="text-center py-12">
         <Shield className="w-16 h-16 text-text-muted mx-auto mb-4" />
         <h3 className="text-xl font-semibold text-text-secondary mb-2 font-serif">No Proofs Generated Yet</h3>
-        <p className="text-text-muted mb-6">
+        <p className="text-text-muted mb-6 font-futuristic">
           Upload your Aadhaar QR code in the "Scan QR Code" tab to automatically generate your identity proofs.
         </p>
       </div>
@@ -149,17 +150,21 @@ export function ProofsDashboard() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-text-primary mb-2 font-serif">My Identity Proofs</h2>
-        <p className="text-text-secondary">
+        <p className="text-text-secondary font-futuristic font-light">
           Your zero-knowledge proofs allow you to verify attributes without revealing personal data.
           Share these proofs with services that need identity verification.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {proofs.map((proof) => (
-          <div
+        {proofs.map((proof, index) => (
+          <motion.div
             key={proof.type}
             className="bg-secondary/50 border border-border-custom rounded-xl p-6 hover:border-vintage-grape-500 transition-colors"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.1 }}
+            whileHover={{ scale: 1.02 }}
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
@@ -187,12 +192,12 @@ export function ProofsDashboard() {
             </div>
 
             {/* Description */}
-            <p className="text-sm text-text-secondary mb-4">
+            <p className="text-sm text-text-secondary mb-4 font-futuristic font-light">
               {getProofDescription(proof.type)}
             </p>
 
             {/* Metadata */}
-            <div className="text-xs text-text-muted mb-4 space-y-1">
+            <div className="text-xs text-text-muted mb-4 space-y-1 font-futuristic">
               <div>
                 Generated: {new Date(proof.generatedAt).toLocaleDateString()}
               </div>
@@ -207,27 +212,27 @@ export function ProofsDashboard() {
             <div className="flex gap-2">
               <button
                 onClick={() => shareProof(proof.type)}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-vintage-grape-600 hover:bg-vintage-grape-700 text-white rounded-lg transition-colors text-sm font-medium font-serif"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-vintage-grape-600 hover:bg-vintage-grape-700 text-white rounded-lg transition-all duration-300 text-sm font-medium font-futuristic hover:shadow-lg hover:shadow-vintage-grape-500/20"
               >
                 <Share2 className="w-4 h-4" />
                 Share
               </button>
               <button
                 onClick={() => regenerateProof(proof.type)}
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-tertiary hover:bg-tertiary/70 text-text-primary rounded-lg transition-colors text-sm font-medium"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-tertiary hover:bg-tertiary/70 text-text-primary rounded-lg transition-all duration-300 text-sm font-medium font-futuristic"
                 title="Regenerate proof with fresh timestamp"
               >
                 <RefreshCw className="w-4 h-4" />
               </button>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
       {/* Info Box */}
       <div className="bg-blue-900/20 border border-blue-700/50 rounded-xl p-6">
         <h3 className="text-lg font-semibold text-blue-300 mb-2 font-serif">How to Use Your Proofs</h3>
-        <ul className="space-y-2 text-sm text-blue-200">
+        <ul className="space-y-2 text-sm text-blue-200 font-futuristic font-light">
           <li className="flex items-start gap-2">
             <span className="text-blue-400 mt-0.5">•</span>
             <span>Click "Share" to copy the proof data to your clipboard</span>
