@@ -44,7 +44,7 @@ export function VerificationFlow({ identity }: VerificationFlowProps) {
             nationality: !!proofs.nationality,
             uniqueness: !!proofs.uniqueness
           });
-          console.log('📦 Loaded stored proofs:', {
+          console.log(' Loaded stored proofs:', {
             age: !!proofs.age,
             nationality: !!proofs.nationality,
             uniqueness: !!proofs.uniqueness
@@ -125,7 +125,7 @@ export function VerificationFlow({ identity }: VerificationFlowProps) {
           {/* Show proofs availability status */}
           {wallet.publicKey && storedProofs && (
             <div className="bg-blue-900/20 border border-blue-600 rounded-lg p-4 mb-4">
-              <h4 className="text-blue-200 font-semibold mb-2">📦 Stored Proofs</h4>
+              <h4 className="text-blue-200 font-semibold mb-2"> Stored Proofs</h4>
               <div className="grid grid-cols-3 gap-2 text-sm">
                 <div className={proofsAvailable.age ? 'text-green-400' : 'text-gray-500'}>
                   {proofsAvailable.age ? '' : ''} Age

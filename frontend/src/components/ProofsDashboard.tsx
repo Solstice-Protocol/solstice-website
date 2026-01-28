@@ -93,7 +93,7 @@ export function ProofsDashboard() {
       case 'nationality':
         return '🌍';
       case 'uniqueness':
-        return '🔒';
+        return '';
       default:
         return '📜';
     }

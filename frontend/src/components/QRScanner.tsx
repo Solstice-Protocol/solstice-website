@@ -5,6 +5,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Camera, Upload, CheckCircle, Loader, X } from 'lucide-react';
 import { generateAllProofs, storeProofs } from '../lib/proofGenerator';
 import { parseAadhaarQR, isMadhaarQR, isPhysicalCardQR } from '../lib/aadhaarParser';
+import { verifyAadhaarWalletLink, linkAadhaarToWallet, recordOnboardingCompletion } from '../lib/onboarding';
 
 export function QRScanner() {
   const { parseQRCode, registerIdentity, loading } = useSolstice();
@@ -17,6 +18,7 @@ export function QRScanner() {
   };
   const [commitment, setCommitment] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<any>(null);
+  const [aadhaarHash, setAadhaarHash] = useState<string | null>(null);
   const [step, setStep] = useState<'scan' | 'parsed' | 'registered'>('scan');
   const [generatingProofs, setGeneratingProofs] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
@@ -154,6 +156,26 @@ export function QRScanner() {
       console.log('Length:', data.length, 'characters');
       console.log('First 100 chars:', data.substring(0, 100));
 
+      // Extract Aadhaar hash early for verification
+      const aadhaarHash = data.substring(0, 12);
+      
+      // Check if this Aadhaar is already linked to another wallet
+      if (wallet.publicKey) {
+        const linkCheck = verifyAadhaarWalletLink(aadhaarHash, wallet.publicKey.toString());
+        
+        if (!linkCheck.valid) {
+          alert(linkCheck.message + '\n\nPlease use a different Aadhaar or reconnect with the linked wallet.');
+          return;
+        }
+        
+        // If Aadhaar is already linked to current wallet, skip registration
+        if (linkCheck.linkedWallet === wallet.publicKey.toString()) {
+          console.log('ℹ️ This Aadhaar is already linked to your wallet.');
+          alert('This Aadhaar is already linked to your current wallet. No need to register again.');
+          return;
+        }
+      }
+
       // Check if it's XML format (physical Aadhaar card QR)
       if (isPhysicalCardQR(data)) {
         console.log('Detected XML format Aadhaar Secure QR Code (from physical card/eAadhaar)');
@@ -188,6 +210,7 @@ export function QRScanner() {
 
         console.log('Identity data ready for registration');
         setParsedData(identityData);
+        setAadhaarHash(aadhaarHash); // Store for later linking
 
       } catch (parseError: any) {
         console.error('Failed to parse mAadhaar QR:', parseError);
@@ -220,6 +243,13 @@ export function QRScanner() {
       if (success) {
         setStep('registered');
         console.log('Identity registered on-chain!');
+        
+        // Link Aadhaar to wallet and record onboarding completion
+        if (aadhaarHash && wallet.publicKey) {
+          linkAadhaarToWallet(aadhaarHash, wallet.publicKey.toString());
+          recordOnboardingCompletion(wallet.publicKey.toString());
+          console.log('Aadhaar linked to wallet');
+        }
 
         // Auto-generate all ZK proofs after successful registration
         if (parsedData) {
