@@ -1,6 +1,6 @@
 # Solstice Protocol Website
 
-Official landing page and web application for [Solstice Protocol](https://github.com/Shaurya2k06/SolsticeProtocol) - Zero-Knowledge Identity Verification on Solana.
+Official web application for [Solstice Protocol](https://github.com/SolsticeProtocol) - Zero-Knowledge Identity Verification on Solana.
 
 ## Overview
 
@@ -98,12 +98,3 @@ See [INTEGRATION.md](./INTEGRATION.md) for detailed setup.
 - snarkjs (ZK proofs), Solana Web3.js
 - Custom fonts: Advercase & Nighty
 
-## Documentation
-
-- [INTEGRATION.md](./INTEGRATION.md) - Full integration guide
-- [frontend/LANDING_PAGE.md](./frontend/LANDING_PAGE.md) - Landing page docs
-- [frontend/FONT_SETUP.md](./frontend/FONT_SETUP.md) - Font setup
-
-## License
-
-MIT

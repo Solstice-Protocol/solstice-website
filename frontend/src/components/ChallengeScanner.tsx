@@ -249,13 +249,13 @@ export function ChallengeScanner() {
       };
 
       console.log('📋 Challenge data from QR:', challenge);
-      console.log('🔑 Challenge ID from QR:', challenge.challengeId);
+      console.log(' Challenge ID from QR:', challenge.challengeId);
       console.log('🔗 Callback URL:', challenge.callbackUrl);
 
       // Submit to callback URL or backend
       if (challenge.callbackUrl) {
         console.log('📤 Submitting proof to:', challenge.callbackUrl);
-        console.log('📦 Proof response:', proofResponse);
+        console.log(' Proof response:', proofResponse);
 
         // Extract challenge ID from callback URL for verification
         const urlMatch = challenge.callbackUrl.match(/challenges\/([^/]+)\//);
@@ -292,7 +292,7 @@ export function ChallengeScanner() {
       // Refresh identity status after successful proof submission
       if (wallet.publicKey) {
         await fetchIdentity(wallet.publicKey.toString());
-        console.log('🔄 Identity status refreshed');
+        console.log(' Identity status refreshed');
       }
 
       // Reset after 3 seconds
@@ -398,10 +398,10 @@ export function ChallengeScanner() {
               onClick={handleSubmitProof}
               disabled={submitting || isExpired}
               className={`flex-1 px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors font-serif ${isExpired
-                  ? 'bg-tertiary text-text-muted cursor-not-allowed'
-                  : submitting
-                    ? 'bg-vintage-grape-700 text-white cursor-wait'
-                    : 'bg-vintage-grape-600 hover:bg-vintage-grape-700 text-white'
+                ? 'bg-tertiary text-text-muted cursor-not-allowed'
+                : submitting
+                  ? 'bg-vintage-grape-700 text-white cursor-wait'
+                  : 'bg-vintage-grape-600 hover:bg-vintage-grape-700 text-white'
                 }`}
             >
               {submitting ? (

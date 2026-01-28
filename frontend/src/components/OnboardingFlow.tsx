@@ -10,7 +10,8 @@ import { generateIdentityCommitment } from '../lib/crypto';
 import { 
   isOnboardingComplete, 
   recordOnboardingCompletion, 
-  linkAadhaarToWallet
+  linkAadhaarToWallet,
+  verifyAadhaarWalletLink
 } from '../lib/onboarding';
 
 type OnboardingStep = 'welcome' | 'wallet' | 'scan-method' | 'camera' | 'upload' | 'processing' | 'complete';
@@ -103,6 +104,25 @@ export function OnboardingFlow() {
       }
 
       console.log('📱 Processing Aadhaar QR code...');
+
+      // Extract Aadhaar hash early for verification
+      const aadhaarHash = qrData.substring(0, 12);
+
+      // Check if this Aadhaar is already linked to another wallet
+      const linkCheck = verifyAadhaarWalletLink(aadhaarHash, wallet.publicKey.toString());
+      
+      if (!linkCheck.valid) {
+        setError(linkCheck.message + ' Please use a different Aadhaar or reconnect with the linked wallet.');
+        setCurrentStep('scan-method');
+        return;
+      }
+      
+      // If Aadhaar is already linked to current wallet, skip onboarding
+      if (linkCheck.linkedWallet === wallet.publicKey.toString()) {
+        console.log('ℹ️ This Aadhaar is already linked to your wallet. Redirecting to status page...');
+        navigate('/status');
+        return;
+      }
       
       const parsedData = await parseAadhaarQR(qrData);
       
@@ -113,7 +133,6 @@ export function OnboardingFlow() {
       console.log('✅ Aadhaar data parsed');
 
       const nationality = 'IN';
-      const aadhaarHash = qrData.substring(0, 12);
       const nonce = qrData.substring(qrData.length - 32);
 
       const proofInputs = {

@@ -23,7 +23,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   useEffect(() => {
     if (publicKey && connected) {
       const onboarded = isOnboardingComplete(publicKey.toString());
-      console.log('🔒 Protected route check:', {
+      console.log(' Protected route check:', {
         wallet: publicKey.toString().slice(0, 8) + '...',
         onboarded,
         path: location.pathname
