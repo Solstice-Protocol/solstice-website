@@ -104,9 +104,10 @@ export function OnboardingFlow() {
       }
 
       console.log('📱 Processing Aadhaar QR code...');
-      
+
       // Extract Aadhaar hash early for verification
-      
+      const aadhaarHash = qrData.substring(0, 12);
+
       // Check if this Aadhaar is already linked to another wallet
       const linkCheck = verifyAadhaarWalletLink(aadhaarHash, wallet.publicKey.toString());
       
