@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { Sidebar, MobileMenuButton } from './Sidebar';
 import { Header } from './Header';
 
 export function Layout() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const wallet = useWallet();
+
+    // Redirect to landing page when wallet disconnects
+    useEffect(() => {
+        if (!wallet.connected && wallet.disconnecting) {
+            window.location.href = 'https://solsticeprotocol.dev';
+        }
+    }, [wallet.connected, wallet.disconnecting]);
 
     return (
         <div className="min-h-screen bg-primary text-text-primary font-serif selection:bg-vintage-grape-700 selection:text-stone-brown-50">

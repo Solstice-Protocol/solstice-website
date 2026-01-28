@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import jsQR from 'jsqr';
 import { useSolstice } from '../contexts/SolsticeContext';
 import { generateAllProofs, storeProofs } from '../lib/proofGenerator';
@@ -19,24 +19,27 @@ type OnboardingStep = 'welcome' | 'wallet' | 'scan-method' | 'camera' | 'upload'
 export function OnboardingFlow() {
   const wallet = useWallet();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { fetchIdentity, registerIdentity } = useSolstice();
-  const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
+  const [currentStep, setCurrentStep] = useState<OnboardingStep>('wallet');
   const [error, setError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
+  // Check if we should skip initial steps (coming from main website with wallet connected)
+  const shouldSkipInitialSteps = searchParams.get('skip') === 'true';
+
   // Progress dots based on major steps
   const getStepIndex = (): number => {
     switch (currentStep) {
-      case 'welcome': return 0;
-      case 'wallet': return 1;
+      case 'wallet': return 0;
       case 'scan-method':
       case 'camera':
-      case 'upload': return 2;
-      case 'processing': return 3;
-      case 'complete': return 4;
+      case 'upload': return 1;
+      case 'processing': return 2;
+      case 'complete': return 3;
       default: return 0;
     }
   };
@@ -263,9 +266,17 @@ export function OnboardingFlow() {
     checkOnboarding();
   }, [wallet.publicKey, fetchIdentity, navigate]);
 
+  // Handle skip parameter - if coming from main website with wallet already connected
+  useEffect(() => {
+    if (shouldSkipInitialSteps && wallet.connected && wallet.publicKey) {
+      // Skip welcome and wallet steps, go directly to scan-method
+      setCurrentStep('scan-method');
+    }
+  }, [shouldSkipInitialSteps, wallet.connected, wallet.publicKey]);
+
   const ProgressDots = () => (
     <div className="flex justify-center gap-2 mb-12">
-      {[0, 1, 2, 3, 4].map((index) => (
+      {[0, 1, 2, 3].map((index) => (
         <div
           key={index}
           className={`w-2 h-2 rounded-full transition-all duration-300 ${
@@ -284,24 +295,6 @@ export function OnboardingFlow() {
     <div className="fixed inset-0 bg-[#1a1a1a] flex items-center justify-center overflow-hidden">
       <div className="w-full max-w-xl px-6">
         <ProgressDots />
-
-        {/* Welcome Step */}
-        {currentStep === 'welcome' && (
-          <div className="text-center space-y-6">
-            <h1 className="text-3xl font-light text-gray-100 mb-3 tracking-wide">
-              Welcome to Solstice
-            </h1>
-            <p className="text-gray-400 text-base max-w-md mx-auto">
-              Privacy-preserving identity verification on Solana
-            </p>
-            <button
-              onClick={() => setCurrentStep('wallet')}
-              className="mt-8 px-10 py-3 bg-gray-700 text-gray-100 font-normal hover:bg-gray-600 transition-colors rounded-md"
-            >
-              Begin
-            </button>
-          </div>
-        )}
 
         {/* Wallet Connection Step */}
         {currentStep === 'wallet' && (
